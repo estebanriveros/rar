@@ -1,0 +1,63 @@
+name: Pruebas-RentARead
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      CI: false
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Instalar node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
+      
+    - name: Instalar dependencias
+      run: |
+        cd Frontend
+        npm install --save react-credit-cards --legacy-peer-deps
+        
+    - name: Build frontend
+      run: |
+        cd Frontend
+        npm run build
+        
+    - name: Instalar Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.10'
+        
+    - name: Instalar dependencias de Python
+      run: |
+        cd Backend
+        pip install -r requirements.txt
+    
+    - name: Iniciar proyecto
+      run: |
+        cd Backend && python manage.py runserver &
+        
+    - name: Ejecutar prueba de humo con Cypress
+      run: |
+        cd Frontend
+        npx cypress run --spec cypress/e2e/pruebahumo.cy.js
+
+    - name: Ejecutar pruebas funcionales con Cypress
+      run: |
+        cd Frontend
+        npx cypress run --spec cypress/e2e/funcionalLogin.cy.js
+        npx cypress run --spec cypress/e2e/funcionalRegister.cy.js
+
+    - name: Ejecutar pruebas unitarias
+      run: |
+        cd Backend
+        python manage.py test

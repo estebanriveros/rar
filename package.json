@@ -1,0 +1,12 @@
+{
+    "name": "Proyecto-DSII",
+    "lockfileVersion": 3,
+    "version": "1.0.0",
+    "requires": true,
+    "scripts": {
+    "sonar": "sonar-scanner"
+    },
+    "devDependencies": {
+    "sonarqube-scanner": "^2.7.0"
+    }
+}

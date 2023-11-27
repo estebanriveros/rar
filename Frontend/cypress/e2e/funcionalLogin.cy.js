@@ -1,0 +1,36 @@
+describe('Caja negra -> login', () => {
+  it('Entrar a login desde home', () => {
+    cy.visit('http://127.0.0.1:8000/home')
+    cy.get('#login').click()
+    cy.url().should('include','http://127.0.0.1:8000/login')
+  })
+  it('Funciona el login', () => {
+    cy.visit('http://127.0.0.1:8000/home')
+    cy.get('#login').click()
+    cy.get('#email').type('ana@gmail.com')
+    cy.get('#contrasena').type('1111')
+    cy.get('#captcha').invoke('css', 'display', 'none')  
+    cy.get('#iniciarsesion').click()
+    cy.request('http://127.0.0.1:8000/login').then((response) => {
+      expect(response.status).to.eq(200)
+    })
+  })
+  it('Error contraseña incorrecta/no existe', () => {
+    cy.visit('http://127.0.0.1:8000/home')
+    cy.get('#login').click()
+    cy.get('#email').type('ana@gmail.com')
+    cy.get('#contrasena').type('111')
+    cy.get('#captcha').invoke('css', 'display', 'none')  
+    cy.get('#iniciarsesion').click()
+    cy.get('.swal-text').contains('Usuario y/o contraseña incorrectas')
+  })
+  it('Error correo incorrecto/no existe', () => {
+    cy.visit('http://127.0.0.1:8000/home')
+    cy.get('#login').click()
+    cy.get('#email').type('asdadasdasdad@gmail.com')
+    cy.get('#contrasena').type('1111')
+    cy.get('#captcha').invoke('css', 'display', 'none')  
+    cy.get('#iniciarsesion').click()
+    cy.get('.swal-text').contains('Usuario y/o contraseña incorrectas')
+  })
+})
